@@ -1,0 +1,40 @@
+main > .container {
+  padding: 60px 15px 0;
+}
+
+.question {
+    height: 210px;
+    border: 2px solid black;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.question_avatar > img{
+    margin-top: 15px;
+    margin-left: 18%;
+    height:80%;
+    width: 80%;
+    object-fit: cover;
+    border-radius: 50%;
+};
+.question_text{
+    margin-bottom: 5%;
+}
+
+.search_buttons{
+    margin-right: 30%;
+}
+
+.likes{
+    margin-top: 21%;
+    margin-left: 15%;
+    border: 2px solid gray;
+    border-radius: 3px
+}
+
+.likes_values{
+    padding-top: 3.5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: green;
+}
