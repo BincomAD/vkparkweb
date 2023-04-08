@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en" class="h-100">
+{% block head %}
   <head>
     <meta charset="utf-8">
     <title>AskMe</title>
@@ -8,32 +9,32 @@
     <!-- Custom styles for this template -->
     <link href="../static/css/my.css" rel="stylesheet">
   </head>
-
+{% endblock %}
   <body class="d-flex flex-column h-100">
 
 <header>
   <!-- Fixed navbar -->
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">AskME</a>
+      <a class="navbar-brand" href="/">AskME</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <form class="d-flex mx-auto" role="search" class="search_buttons">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success"><a href="ask.html" style="text-decoration: none; color: green;">Ask</a></button>
+          <button class="btn btn-outline-success"><a href="/ask" style="text-decoration: none; color: green;">Ask</a></button>
         </form>
 
         <ul class="navbar-nav ml-auto">
           <li class="nav-item mt-1">
-            <a class="nav-link" href="settings.html">Мой аккаунт</a>
+            <a class="nav-link" href="/settings">Мой аккаунт</a>
           </li>
           <li class="nav-item mt-1">
             <a class="nav-link" href="#">Выйти</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="settings.html">
+            <a class="nav-link" href="settings">
                 <img src="https://via.placeholder.com/30x30" class="rounded-circle" alt="Аватар пользователя">
             </a>
           </li>
@@ -56,12 +57,14 @@
   <div class="container">
     <div class = "row mt-5">
       <div class = "col-9">
+        {% block main %}
 
+        {% endblock %}
       </div>
       <div class = "col-3">
         <div class = "row">
           <h3>Top tags:</h3>
-          <p><a href = "tag/cat.html">Cats</a>, <a href = "tag/black_jack.html">Black_jack</a>, <a href = "tag/ML.html">ML</a>, <a href = "tag/Web.html">Web</a>, <a href = "tag/dogs.html">Dogs</a>, <a href = "tag/Health.html">Health</a>, <a href = "tag/Game.html">Game</a></p>
+          <p><a href = "/tag/cats">Cats</a>, <a href = "/tag/black_jack">Black_jack</a>, <a href = "/tag/ML">ML</a>, <a href = "/tag/Web">Web</a>, <a href = "/tag/dogs">Dogs</a>, <a href = "/tag/Health">Health</a>, <a href = "/tag/Game">Game</a></p>
         </div>
         <div class = "row">
           <h3>Top users:</h3>

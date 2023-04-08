@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <head>
+    <meta charset="utf-8">
+    <title>AskMe</title>
+    <link href="../../static/css/bootstrap.css" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="../../static/css/my.css" rel="stylesheet">
+  </head>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+            <div class="row">
+              <div class="col-sm-2">
+                <img src="../../static/img/avatar6.png" class="img-thumbnail" alt="Avatar">
+                <div class = "likes">
+                <div class="btn-group btn-group-sm " role="group" aria-label="...">
+                  <div class="likes_values mx_auto">10</div>
+                  <button type="button" class="btn btn-default" style="color: green;">Up</button>
+                  <button type="button" class="btn btn-default" style="color: red;">Down</button>
+                </div>
+              </div>
+              </div>
+              <div class="col-sm-10">
+                <h2>{{ question.title }}</h2>
+                <p>{{ question.text }}</p>
+                <p>Tags: <a href="#">Bootstrap</a>, <a href="#">Web development</a></p>
+              </div>
+            </div>
+            <hr>
+            <h4>Comments</h4>
+            {% for answer in question.answers %}
+            <div class="row mt-5">
+              <div class="col-2">
+                <img src="../../static/img/avatar2.png" class="img-thumbnail" alt="Avatar">
+                <div class = "likes">
+                <div class="btn-group btn-group-sm " role="group" aria-label="...">
+                  <div class="likes_values mx_auto">10</div>
+                  <button type="button" class="btn btn-default" style="color: green;">Up</button>
+                  <button type="button" class="btn btn-default" style="color: red;">Down</button>
+                </div>
+              </div>
+
+              </div>
+              <div class="col-10">
+                <p>{{ answer.text }}</p>
+                <div class="form-check mt-5">
+                  <input class="form-check-input" type="checkbox" value="" class="correctAnswer">
+                  <label class="form-check-label">
+                    Correct
+                  </label>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            <div class="row mt-4">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+              </nav>
+            </div>
+
+            </div>
+<div class="col-sm-12">
+              <hr>
+              <form>
+                <div class="form-group md_5">
+                  <label for="comment">Leave a comment:</label>
+                  <textarea class="form-control" id="comment" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary"  style="margin-top: 20px; margin-bottom: 20px;">Answer</button>
+              </form>
+            </div>
+{% endblock %}
+
+

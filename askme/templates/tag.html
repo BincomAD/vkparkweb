@@ -1,13 +1,24 @@
 {% extends 'base.html' %}
 
+{% block head %}
+  <head>
+    <meta charset="utf-8">
+    <title>AskMe</title>
+    <link href="../../static/css/bootstrap.css" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="../../static/css/my.css" rel="stylesheet">
+  </head>
+{% endblock %}
+
 {% block main %}
-  <h1>New questions</h1>
+  <h1>Tag: {{ tag_name }}</h1>
   {% for question in questions %}
     <div class = "question">
           <div class = "row">
             <div class="col-2">
               <div class = "question_avatar">
-                <img src="../static/img/avatar2.png" alt="avatar">
+                <img src="../../static/img/avatar2.png" alt="avatar">
               </div>
               <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
