@@ -18,26 +18,21 @@
               </div>
             </div>
             <div class="col-9">
-              <h2><a href = "/question/{{ question.id }}">{{ question.title }}</a></h2>
+              <h2><a href = "{% url 'question' question.id %}">{{ question.title }}</a></h2>
               <div><p>{{ question.text }}</p></div>
               <div class = "row" style="margin-top: 13%;">
                 <div class ="col-4"><p>Answers (3)</p></div>
-                <div class = "col-8">Tags: <a href="#">Blac_jack</a>, <a href="#">Black_jack</a></div>
+                <div class = "col-8">Tags:
+                  {% for tag in question.tags|slice:"0:" %}
+                    <a href="{% url 'tag' tag_name=tag %}">{{ tag }}{% if not forloop.last %},{% endif %}</a>
+                    <a> </a>
+                  {% endfor %}
+                </div>
               </div>
             </div>
           </div>
         </div>
   {% endfor %}
-<div class="row">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-              <li class="page-item"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-          </nav>
-        </div>
+  {% include 'paginator.html' %}
 {% endblock %}
 

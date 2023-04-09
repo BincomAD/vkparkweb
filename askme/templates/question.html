@@ -27,13 +27,18 @@
               <div class="col-sm-10">
                 <h2>{{ question.title }}</h2>
                 <p>{{ question.text }}</p>
-                <p>Tags: <a href="#">Bootstrap</a>, <a href="#">Web development</a></p>
+                  <div class = "col-8">Tags:
+                  {% for tag in question.tags|slice:"0:" %}
+                    <a href="{% url 'tag' tag_name=tag %}">{{ tag }}{% if not forloop.last %},{% endif %}</a>
+                    <a> </a>
+                  {% endfor %}
+                </div>
               </div>
             </div>
             <hr>
             <h4>Comments</h4>
-            {% for answer in question.answers %}
-            <div class="row mt-5">
+            {% for answer in questions %}
+            <div class="row mt-5 md">
               <div class="col-2">
                 <img src="../../static/img/avatar2.png" class="img-thumbnail" alt="Avatar">
                 <div class = "likes">
@@ -56,18 +61,9 @@
               </div>
             </div>
             {% endfor %}
-            <div class="row mt-4">
-              <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-              </nav>
-            </div>
-
+                <div class="mt-5">
+                    {% include 'paginator.html' %}
+                </div>
             </div>
 <div class="col-sm-12">
               <hr>
