@@ -7,11 +7,11 @@
       <div class = "row">
             <div class="col-2">
               <div class = "question_avatar">
-                <img src="../static/img/avatar2.png" alt="avatar">
+                <img src="{{ question.avatar }}" alt="avatar">
               </div>
               <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
-                  <div class="likes_values mx_auto">10</div>
+                  <div class="likes_values mx_auto">{{ question.rating }}</div>
                   <button type="button" class="btn btn-default" style="color: green;">Up</button>
                   <button type="button" class="btn btn-default" style="color: red;">Down</button>
                 </div>
@@ -21,11 +21,11 @@
               <h2><a href = "{% url 'question' question.id %}">{{ question.title }}</a></h2>
               <div><p>{{ question.text }}</p></div>
               <div class = "row" style="margin-top: 13%;">
-                <div class ="col-4"><p>Answers (3)</p></div>
+                <div class ="col-4"><p>Answers ({{ question.answers }})</p></div>
 
                 <div class = "col-8">Tags:
-                  {% for tag in question.tags|slice:"0:" %}
-                    <a href="{% url 'tag' tag_name=tag %}">{{ tag }}{% if not forloop.last %},{% endif %}</a>
+                  {% for tag in question.tags %}
+                    <a href="{% url 'tag' tag_name=tag.name %}">{{ tag.name }}{% if not forloop.last %},{% endif %}</a>
                     <a> </a>
                   {% endfor %}
                 </div>

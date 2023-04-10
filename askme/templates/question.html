@@ -15,10 +15,10 @@
 <div class="container">
             <div class="row">
               <div class="col-sm-2">
-                <img src="../../static/img/avatar6.png" class="img-thumbnail" alt="Avatar">
+                <img src="{{ question.avatar }}" class="img-thumbnail" alt="Avatar">
                 <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
-                  <div class="likes_values mx_auto">10</div>
+                  <div class="likes_values mx_auto">{{ question.rating }}</div>
                   <button type="button" class="btn btn-default" style="color: green;">Up</button>
                   <button type="button" class="btn btn-default" style="color: red;">Down</button>
                 </div>
@@ -29,7 +29,7 @@
                 <p>{{ question.text }}</p>
                   <div class = "col-8">Tags:
                   {% for tag in question.tags|slice:"0:" %}
-                    <a href="{% url 'tag' tag_name=tag %}">{{ tag }}{% if not forloop.last %},{% endif %}</a>
+                    <a href="{% url 'tag' tag_name=tag.name %}">{{ tag.name }}{% if not forloop.last %},{% endif %}</a>
                     <a> </a>
                   {% endfor %}
                 </div>
@@ -40,10 +40,10 @@
             {% for answer in questions %}
             <div class="row mt-5 md">
               <div class="col-2">
-                <img src="../../static/img/avatar2.png" class="img-thumbnail" alt="Avatar">
+                <img src="{{ answer.avatar }}" class="img-thumbnail" alt="Avatar">
                 <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
-                  <div class="likes_values mx_auto">10</div>
+                  <div class="likes_values mx_auto">{{ answer.rating }}</div>
                   <button type="button" class="btn btn-default" style="color: green;">Up</button>
                   <button type="button" class="btn btn-default" style="color: red;">Down</button>
                 </div>
