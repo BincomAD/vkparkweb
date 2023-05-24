@@ -17,6 +17,8 @@ urlpatterns = [
     path('hot/', views.hot, name='hot'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('question/<int:question_id>/add_answer/', views.add_answer, name='add_answer'),
+    path('like_question/', views.like_question, name='like_question'),
+    path('select_correct_answer/', views.select_correct_answer, name='select_correct_answer'),
 ]
 
 if settings.DEBUG:

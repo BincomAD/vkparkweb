@@ -3,6 +3,9 @@ from .models import *
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, login as auth_login
 from .forms import *
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 def index(request):
     questions = []
     questions_list = Question.questions.new()
@@ -179,3 +182,51 @@ def add_answer(request, question_id):
         question = Question.objects.get(id=question_id)
         answer = Answer.objects.create(text=answer_text, user=request.user, question=question)
         return redirect(reverse('question', args=[question_id]) + f'#{answer.id}')
+
+@csrf_exempt
+def like_question(request):
+    if request.method == 'POST' and request.is_ajax():
+        question_id = request.POST.get('id')
+        like_type = request.POST.get('type')
+
+        question = get_object_or_404(Question, id=question_id)
+
+        # Проверяем, лайкал ли пользователь уже данный вопрос
+        like, created = Like.objects.get_or_create(user=request.user, question=question)
+        if like_type == 'like':
+            if not created and like.like_type == 'like':
+                return JsonResponse({'error': 'You have already liked this question.'})
+            like.like_type = 'like'
+            question.rating += 1
+        elif like_type == 'dislike':
+            if not created and like.like_type == 'dislike':
+                return JsonResponse({'error': 'You have already disliked this question.'})
+            like.like_type = 'dislike'
+            question.rating -= 1
+
+        question.save()
+        like.save()
+
+        return JsonResponse({'rating': question.rating})
+
+    return JsonResponse({'error': 'Invalid request'})
+
+@csrf_exempt
+def select_correct_answer(request):
+    if request.method == 'POST' and request.is_ajax():
+        question_id = request.POST.get('question_id')
+        answer_id = request.POST.get('answer_id')
+
+        question = get_object_or_404(Question, id=question_id)
+        answer = get_object_or_404(Answer, id=answer_id)
+
+        # Проверяем, является ли пользователь автором вопроса
+        if request.user != question.user:
+            return JsonResponse({'error': 'Only the author of the question can select the correct answer.'})
+
+        question.correct_answer = answer
+        question.save()
+
+        return JsonResponse({'success': 'Correct answer has been selected.'})
+
+    return JsonResponse({'error': 'Invalid request'})

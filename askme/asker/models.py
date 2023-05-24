@@ -11,6 +11,7 @@ class QuestionManager(models.Manager):
 
     def new(self):
         return self.order_by('-created_at')
+
 class Question(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
@@ -21,11 +22,22 @@ class Question(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
     questions = QuestionManager()
+    correct_answer = models.ForeignKey(
+        'Answer',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='correct_for_question'
+    )
 
 class Answer(models.Model):
     text = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name='answers'
+    )
     rating = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
