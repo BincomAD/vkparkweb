@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from PIL import Image
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -11,7 +12,6 @@ class QuestionManager(models.Manager):
     def new(self):
         return self.order_by('-created_at')
 class Question(models.Model):
-    id = models.IntegerField(primary_key = True, null = False)
     title = models.CharField(max_length=255)
     text = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -23,7 +23,6 @@ class Question(models.Model):
     questions = QuestionManager()
 
 class Answer(models.Model):
-    id = models.IntegerField(primary_key = True, null = False)
     text = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -33,8 +32,14 @@ class Answer(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE  )
-    avatar = models.ImageField(upload_to='upload/avatars/')
+    avatar = models.ImageField(upload_to='Uploads/avatar/', default='Uploads/avatar/1.png')
     nickname = models.CharField(max_length=255, null=True)
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if not self.avatar:
+            self.avatar = 'Uploads/avatar/1.png'
+            self.save()
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

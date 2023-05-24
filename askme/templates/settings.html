@@ -1,24 +1,25 @@
 {% extends 'base.html' %}
 
 {% block main %}
-        <h1>Настройки</h1>
-        <form>
-          <div class="form-group mb-4">
-            <label for="login">Логин</label>
-            <input type="text" class="form-control" id="login" placeholder="Введите логин">
-          </div>
-          <div class="form-group mb-4">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Введите email">
-          </div>
-          <div class="form-group mb-4">
-            <label for="nickname">Никнейм</label>
-            <input type="text" class="form-control" id="nickname" placeholder="Введите никнейм">
-          </div>
-          <div class="form-group mb-4">
-            <label for="avatar">Загрузите аватарку</label>
-            <input type="file" class="form-control-file" id="avatar">
-          </div>
-          <button type="submit" class="btn btn-primary mb-4">Сохранить</button>
-        </form>
+  <h1>Настройки</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group mb-4">
+      <label for="login">Логин</label>
+      <input type="text" class="form-control" id="login" name="username" placeholder="Введите логин" value="{{ user.username }}">
+    </div>
+    <div class="form-group mb-4">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Введите email" value="{{ user.email }}">
+    </div>
+    <div class="form-group mb-4">
+      <label for="nickname">Никнейм</label>
+      <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Введите никнейм" value="{{ user.profile.nickname }}">
+    </div>
+    <div class="form-group mb-4">
+      <label for="avatar">Загрузите аватарку</label>
+      <input type="file" class="form-control-file" id="avatar" name="avatar">
+    </div>
+    <button type="submit" class="btn btn-primary mb-4">Сохранить</button>
+  </form>
 {% endblock %}

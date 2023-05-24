@@ -1,6 +1,8 @@
-from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import *
+from django.shortcuts import render, redirect, reverse
+from django.contrib.auth import authenticate, login as auth_login
+from .forms import *
 def index(request):
     questions = []
     questions_list = Question.questions.new()
@@ -13,7 +15,7 @@ def index(request):
             'id': question.id,
             'text': question.text,
             'tags': question.tags.all(),
-            'avatar': user.avatar,
+            'avatar': user.avatar.url,
             'rating': question.rating,
             'answers': answers.count()
         })
@@ -61,8 +63,9 @@ def tag(request, tag_name):
     context = {'questions': objects, 'tag_name': tag_name}
     return render(request, 'tag.html', context)
 
+
 def question(request, question_id):
-    questionCurr = Question.objects.get(id = question_id)
+    questionCurr = Question.objects.get(id=question_id)
     userQuest = Profile.objects.get(user=questionCurr.user)
     question = {
         'title': questionCurr.title,
@@ -74,29 +77,90 @@ def question(request, question_id):
         'rating': questionCurr.rating,
     }
     for i in Answer.objects.filter(question=questionCurr):
-        userAnsw = Profile.objects.get(user= i.user)
+        userAnsw = Profile.objects.get(user=i.user)
         question['answers'].append({
             'text': i.text,
             'id': i.id,
             'rating': i.rating,
             'avatar': userAnsw.avatar,
-
         })
-        objects = paginate(question['answers'], request, 5)
-    context = {'question': question, 'questions': objects}
+
+    paginator = Paginator(question['answers'], 5)
+    page_number = request.GET.get('page')
+    objects = paginator.get_page(page_number)
+
+    context = {'question': question, 'questions': objects, 'profile': userQuest}
     return render(request, 'question.html', context)
 
+
+
 def ask(request):
-    return render(request,'ask.html')
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.user = request.user
+
+            # Сохраняем введенные теги и связываем их с вопросом
+            tags = form.cleaned_data.get('tags')  # Получаем выбранные теги из формы
+            question.save()  # Сохраняем вопрос
+
+            for tag_name in tags:
+                tag, created = Tag.objects.get_or_create(name=tag_name)  # Получаем или создаем тег по имени
+                question.tags.add(tag)  # Связываем вопрос с тегом
+
+            return redirect('question', question_id=question.pk)  # Перенаправляем на страницу вопроса
+    else:
+        form = QuestionForm()
+    return render(request, 'ask.html', {'form': form})
+
 
 def login(request):
-    return render(request,'login.html')
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth_login(request, user)  # Используем явное указание модуля
+                return redirect(request.GET.get('continue', '/'))
+            else:
+                form.add_error(None, 'Неверное имя пользователя или пароль.')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
 
 def registration(request):
-    return render(request,'registration.html')
+    if request.method == 'POST':
+        form = SignupForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
 
+            # Создание профиля и связывание с пользователем
+            profile = Profile(user=user, avatar=request.FILES.get('avatar'), nickname=form.cleaned_data['nickname'])
+            profile.save()
+
+            return redirect('/')
+    else:
+        form = SignupForm()
+    return render(request, 'registration.html', {'form': form})
 def settings(request):
-    return render(request,'settings.html')
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            user = request.user
+            user.username = form.cleaned_data['username']
+            user.email = form.cleaned_data['email']
+            user.save()
+            form.save()
+            return redirect('settings')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'settings.html', {'form': form})
+
 
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, per_page)
@@ -108,3 +172,10 @@ def paginate(objects_list, request, per_page=10):
     except EmptyPage:
         objects = paginator.page(paginator.num_pages)
     return objects
+
+def add_answer(request, question_id):
+    if request.method == 'POST':
+        answer_text = request.POST.get('answer')
+        question = Question.objects.get(id=question_id)
+        answer = Answer.objects.create(text=answer_text, user=request.user, question=question)
+        return redirect(reverse('question', args=[question_id]) + f'#{answer.id}')

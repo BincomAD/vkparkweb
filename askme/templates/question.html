@@ -15,7 +15,7 @@
 <div class="container">
             <div class="row">
               <div class="col-sm-2">
-                <img src="{{ question.avatar }}" class="img-thumbnail" alt="Avatar">
+                <img src="../../media/media/{{ profile.avatar }}" class="img-thumbnail" alt="Avatar">
                 <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
                   <div class="likes_values mx_auto">{{ question.rating }}</div>
@@ -38,9 +38,9 @@
             <hr>
             <h4>Comments</h4>
             {% for answer in questions %}
-            <div class="row mt-5 md">
+            <div class="row mt-5 md" id="{{ answer.id }}">
               <div class="col-2">
-                <img src="{{ answer.avatar }}" class="img-thumbnail" alt="Avatar">
+                <img src="../../media/{{ answer.avatar.url }}" class="img-thumbnail" alt="Avatar">
                 <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
                   <div class="likes_values mx_auto">{{ answer.rating }}</div>
@@ -66,14 +66,15 @@
                 </div>
             </div>
 <div class="col-sm-12">
-              <hr>
-              <form>
-                <div class="form-group md_5">
-                  <label for="comment">Leave a comment:</label>
-                  <textarea class="form-control" id="comment" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary"  style="margin-top: 20px; margin-bottom: 20px;">Answer</button>
-              </form>
+    <hr>
+    <form method="post" action="{% url 'add_answer' question.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="answer">Leave an answer:</label>
+            <textarea class="form-control" id="answer" name="answer" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Answer</button>
+    </form>
             </div>
 {% endblock %}
 
