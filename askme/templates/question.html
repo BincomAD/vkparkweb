@@ -5,77 +5,140 @@
     <meta charset="utf-8">
     <title>AskMe</title>
     <link href="../../static/css/bootstrap.css" rel="stylesheet" crossorigin="anonymous">
-
     <!-- Custom styles for this template -->
     <link href="../../static/css/my.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
 {% endblock %}
 
 {% block main %}
-<div class="container">
-            <div class="row">
-              <div class="col-sm-2">
-                <img src="../../media/media/{{ profile.avatar }}" class="img-thumbnail" alt="Avatar">
-                <div class = "likes">
-                <div class="btn-group btn-group-sm " role="group" aria-label="...">
-                  <div class="likes_values mx_auto">{{ question.rating }}</div>
-                  <button type="button" class="btn btn-default" style="color: green;">Up</button>
-                  <button type="button" class="btn btn-default" style="color: red;">Down</button>
-                </div>
-              </div>
-              </div>
-              <div class="col-sm-10">
-                <h2>{{ question.title }}</h2>
-                <p>{{ question.text }}</p>
-                  <div class = "col-8">Tags:
-                  {% for tag in question.tags|slice:"0:" %}
-                    <a href="{% url 'tag' tag_name=tag.name %}">{{ tag.name }}{% if not forloop.last %},{% endif %}</a>
-                    <a> </a>
-                  {% endfor %}
-                </div>
-              </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-2">
+        <img src="../../media/{{ profile.avatar }}" class="img-thumbnail" alt="Avatar">
+        <div class="likes">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+            <div class="likes_values mx_auto">{{ question.rating }}</div>
+            <button type="button" class="btn btn-default like-button" data-item-id="{{ question.id }}" data-item-type="question" style="color: green;">Up</button>
+            <button type="button" class="btn btn-default dislike-button" data-item-id="{{ question.id }}" data-item-type="question" style="color: red;">Down</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-10">
+        <h2>{{ question.title }}</h2>
+        <p>{{ question.text }}</p>
+        <div class="col-8">Tags:
+          {% for tag in question.tags|slice:"0:" %}
+            <a href="{% url 'tag' tag_name=tag.name %}">{{ tag.name }}{% if not forloop.last %},{% endif %}</a>
+            <a> </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h4>Comments</h4>
+    {% for answer in questions %}
+      <div class="row mt-5 md" id="{{ answer.id }}">
+        <div class="col-2">
+          <img src="../../{{ answer.avatar.url }}" class="img-thumbnail" alt="Avatar">
+          <div class="likes">
+            <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <div class="likes_values mx_auto">{{ answer.rating }}</div>
+              <button type="button" class="btn btn-default like-button" data-item-id="{{ answer.id }}" data-item-type="answer" style="color: green;">Up</button>
+              <button type="button" class="btn btn-default dislike-button" data-item-id="{{ answer.id }}" data-item-type="answer" style="color: red;">Down</button>
             </div>
-            <hr>
-            <h4>Comments</h4>
-            {% for answer in questions %}
-            <div class="row mt-5 md" id="{{ answer.id }}">
-              <div class="col-2">
-                <img src="../../media/{{ answer.avatar.url }}" class="img-thumbnail" alt="Avatar">
-                <div class = "likes">
-                <div class="btn-group btn-group-sm " role="group" aria-label="...">
-                  <div class="likes_values mx_auto">{{ answer.rating }}</div>
-                  <button type="button" class="btn btn-default" style="color: green;">Up</button>
-                  <button type="button" class="btn btn-default" style="color: red;">Down</button>
-                </div>
-              </div>
-
-              </div>
-              <div class="col-10">
-                <p>{{ answer.text }}</p>
-                <div class="form-check mt-5">
-                  <input class="form-check-input" type="checkbox" value="" class="correctAnswer">
-                  <label class="form-check-label">
-                    Correct
-                  </label>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-                <div class="mt-5">
-                    {% include 'paginator.html' %}
-                </div>
-            </div>
-<div class="col-sm-12">
+          </div>
+        </div>
+        <div class="col-10">
+          <p>{{ answer.text }}</p>
+          <div class="form-check mt-5">
+            <input class="form-check-input correct-answer" type="checkbox" value="{{ answer.id }}">
+            <label class="form-check-label">
+              Correct
+            </label>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="mt-5">
+      {% include 'paginator.html' %}
+    </div>
+  </div>
+  <div class="col-sm-12">
     <hr>
     <form method="post" action="{% url 'add_answer' question.id %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="answer">Leave an answer:</label>
-            <textarea class="form-control" id="answer" name="answer" rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Answer</button>
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="answer">Leave an answer:</label>
+        <textarea class="form-control" id="answer" name="answer" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Answer</button>
     </form>
-            </div>
+  </div>
+
+  <script>
+    // AJAX request for question like/dislike
+    $(document).on('click', '.like-button, .dislike-button', function() {
+      var item_id = $(this).data('item-id');
+      var item_type = $(this).data('item-type');
+      var action = $(this).hasClass('like-button') ? 'like' : 'dislike';
+      var url = '/like/' + item_type + '/' + item_id + '/' + action + '/';
+
+      // Include CSRF token in the request headers
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+          if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+          }
+        }
+      });
+
+      // Send AJAX request
+      $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+          // Handle successful response
+          // Update the rating on the page
+          $('.likes_values').text(response.rating);
+          button.hide();
+        },
+        error: function(xhr, status, error) {
+          // Handle error response
+          console.log(error);
+        }
+      });
+    });
+
+    // AJAX request for selecting correct answer
+    $(document).on('change', '.correct-answer', function() {
+      var answer_id = $(this).val();
+      var url = '/select_correct_answer/' + answer_id + '/';
+
+      // Include CSRF token in the request headers
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+          if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+          }
+        }
+      });
+
+      // Send AJAX request
+      $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+          // Handle successful response
+          // Display a success message or update the UI
+        },
+        error: function(xhr, status, error) {
+          // Handle error response
+          console.log(error);
+        }
+      });
+    });
+  </script>
 {% endblock %}
-
-

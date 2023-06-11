@@ -7,13 +7,11 @@
       <div class = "row">
             <div class="col-2">
               <div class = "question_avatar">
-                <img src="media{{ question.avatar }}" alt="avatar">
+                <img src="{{ question.avatar }}" alt="avatar">
               </div>
               <div class = "likes">
                 <div class="btn-group btn-group-sm " role="group" aria-label="...">
                   <div class="likes_values mx_auto">{{ question.rating }}</div>
-                  <button type="button" class="btn btn-default" style="color: green;">Up</button>
-                  <button type="button" class="btn btn-default" style="color: red;">Down</button>
                 </div>
               </div>
             </div>

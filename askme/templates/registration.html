@@ -19,16 +19,19 @@
             </div>
             <div class="form-group mt-3">
                 <label for="password">Пароль</label>
-                <input type="password" class="form-control" id="password" name="password1" placeholder="Введите пароль">
+                <input type="password" class="form-control" id="password" name="password1" placeholder="Введите пароль" minlength="8">
             </div>
             <div class="form-group mt-3">
                 <label for="password-confirm">Повторите пароль</label>
-                <input type="password" class="form-control" id="password-confirm" name="password2" placeholder="Подтвердите пароль">
+                <input type="password" class="form-control" id="password-confirm" name="password2" placeholder="Подтвердите пароль" minlength="8">
             </div>
             <div class="form-group mt-3">
                 <label for="avatar">Загрузить аватар</label>
                 <input type="file" class="form-control-file" id="avatar" name="avatar">
             </div>
+            {% if form.errors %}
+                    <small class="form-text text-danger">{{ form.errors }}</small>
+            {% endif %}
             <button type="submit" class="btn btn-primary mt-4">Зарегистрироваться</button>
         </form>
     </div>

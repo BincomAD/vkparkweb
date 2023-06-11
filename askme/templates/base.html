@@ -8,6 +8,7 @@
 
     <!-- Custom styles for this template -->
     <link href="../static/css/my.css" rel="stylesheet">
+
   </head>
 {% endblock %}
   <body class="d-flex flex-column h-100">
@@ -38,7 +39,7 @@
         </li>
         <li class="nav-item mx-2">
                 <a class="nav-link" href="{% url 'settings' %}">
-                    <img src="/media{{ user.profile.avatar.url }}" class="rounded-circle" alt="Аватар пользователя" style="width: 37px; height: 37px;">
+                    <img src="{{ user.profile.avatar.url }}" class="rounded-circle" alt="Аватар пользователя" style="width: 37px; height: 37px;">
                 </a>
         </li>
     </ul>
@@ -69,7 +70,12 @@
       <div class = "col-3">
         <div class = "row">
           <h3>Top tags:</h3>
-          <p><a href = "{% url 'tag' tag_name='cats' %}">Cats</a>, <a href = "{% url 'tag' tag_name='black_jack' %}">Black_jack</a>, <a href = "{% url 'tag' tag_name='ml' %}">ML</a>, <a href = "{% url 'tag' tag_name='web' %}">Web</a>, <a href = "{% url 'tag' tag_name='dogs' %}">Dogs</a>, <a href = "{% url 'tag' tag_name='health' %}">Health</a>, <a href = "{% url 'tag' tag_name='game' %}">Game</a></p>
+            <p>
+                {% for tag in tags %}
+                    <a href="{% url 'tag' tag_name=tag.name %}">{{ tag.name }}</a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
         </div>
         <div class = "row">
           <h3>Top users:</h3>
